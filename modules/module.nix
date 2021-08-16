@@ -10,7 +10,7 @@ with lib;
       type = package;
       default = pkgs.nodejs-14_x;
     };
-    ripPath = mkOption {
+    ripPackage = mkOption {
       type = package;
       default = pkgs.ripgrep;
     };
@@ -25,6 +25,7 @@ with lib;
       cfg = config.services.nixos-vscode-server;
       nodePath = "${cfg.nodePackage}/bin/node";
       findPath = "${cfg.findPackage}/bin/find";
+      ripPath = "${cfg.ripPackage}/bin/rg";
       mkStartScript = name: pkgs.writeShellScript "${name}.sh" ''
         set -euo pipefail
         PATH=${makeBinPath (with pkgs; [ coreutils inotify-tools ])}
@@ -32,9 +33,9 @@ with lib;
         bin_dir2=~/.vscode-server-insiders/bin
         if [[ -e $bin_dir ]]; then
           ${findPath} "$bin_dir" -mindepth 2 -maxdepth 2 -name node -type f -exec ln -sfT ${nodePath} {} \;
-          ${findPath} "$bin_dir" -path '*/vscode-ripgrep/bin/rg' -exec ln -sfT ${ripPath}/bin/rg {} \;
+          ${findPath} "$bin_dir" -path '*/vscode-ripgrep/bin/rg' -exec ln -sfT ${ripPath} {} \;
           ${findPath} "$bin_dir2" -mindepth 2 -maxdepth 2 -name node -type f -exec ln -sfT ${nodePath} {} \;
-          ${findPath} "$bin_dir2" -path '*/vscode-ripgrep/bin/rg' -exec ln -sfT ${ripPath}/bin/rg {} \;
+          ${findPath} "$bin_dir2" -path '*/vscode-ripgrep/bin/rg' -exec ln -sfT ${ripPath} {} \;
         else
           mkdir -p "$bin_dir"
           while IFS=: read -r bin_dir event; do
