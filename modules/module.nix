@@ -51,7 +51,8 @@ with lib;
               # See the comments above Restart in the service config.
               exit 0
             fi
-        done < <(inotifywait -q -m -e CREATE,ISDIR -e DELETE_SELF --format '%w%f:%e' "$bin_dir")
+          done < <(inotifywait -q -m -e CREATE,ISDIR -e DELETE_SELF --format '%w%f:%e' "$bin_dir")
+        fi
       '';
     in
       mkIf cfg.enable (
