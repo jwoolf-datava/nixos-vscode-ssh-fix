@@ -33,11 +33,11 @@ with lib;
         bin_dir2=~/.vscode-server-insiders/bin
         if [[ -e $bin_dir2 ]]; then
           ${findPath} "$bin_dir2" -mindepth 2 -maxdepth 2 -name node -type f -exec ln -sfT ${nodePath} {} \;
-          ${findPath} "$bin_dir2" -path '*/vscode-ripgrep/bin/rg' -exec ln -sfT ${ripPath} {} \;
+          ${findPath} "$bin_dir2" -path '*/bin/rg' -exec ln -sfT ${ripPath} {} \;
         fi
         if [[ -e $bin_dir ]]; then
           ${findPath} "$bin_dir" -mindepth 2 -maxdepth 2 -name node -type f -exec ln -sfT ${nodePath} {} \;
-          ${findPath} "$bin_dir" -path '*/vscode-ripgrep/bin/rg' -exec ln -sfT ${ripPath} {} \;
+          ${findPath} "$bin_dir" -path '*/bin/rg' -exec ln -sfT ${ripPath} {} \;
         fi
         mkdir -p "$bin_dir"
         while IFS=: read -r bin_dir event; do
@@ -46,8 +46,14 @@ with lib;
             # Create a trigger to know when their node is being created and replace it for our symlink.
             touch "$bin_dir/node"
             inotifywait -qq -e DELETE_SELF "$bin_dir/node"
-            ln -sfT ${nodePath} "$bin_dir/node"
-            ln -sfT ${ripPath} "$bin_dir/node_modules/vscode-ripgrep/bin/rg"
+            if [[ -e $bin_dir2 ]]; then
+              ${findPath} "$bin_dir2" -mindepth 2 -maxdepth 2 -name node -type f -exec ln -sfT ${nodePath} {} \;
+              ${findPath} "$bin_dir2" -path '*/bin/rg' -exec ln -sfT ${ripPath} {} \;
+            fi
+            if [[ -e $bin_dir ]]; then
+              ${findPath} "$bin_dir" -mindepth 2 -maxdepth 2 -name node -type f -exec ln -sfT ${nodePath} {} \;
+              ${findPath} "$bin_dir" -path '*/bin/rg' -exec ln -sfT ${ripPath} {} \;
+            fi
           # The monitored directory is deleted, e.g. when "Uninstall VS Code Server from Host" has been run.
           elif [[ $event == DELETE_SELF ]]; then
             # See the comments above Restart in the service config.
