@@ -4,7 +4,7 @@ moduleConfig:
 with lib;
 
 let
-    originalNodePackage = pkgs.nodejs-14_x;
+  originalNodePackage = pkgs.nodejs-14_x;
 
   # Adapted from https://github.com/NixOS/nixpkgs/blob/nixos-unstable/pkgs/applications/editors/vscode/generic.nix#L181
   nodePackageFhs = pkgs.buildFHSUserEnv {
@@ -48,7 +48,7 @@ let
     originalNodePackageBin;
 in
 {
-  options.services.nixos-vscode-server = with types;{
+  options.services.vscode-server = with types;{
     enable = mkEnableOption "auto-fix service for vscode-server in NixOS";
     nodePackage = mkOption {
       type = package;
