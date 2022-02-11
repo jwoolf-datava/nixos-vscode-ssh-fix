@@ -75,6 +75,7 @@ in
         PATH=${makeBinPath (with pkgs; [ coreutils findutils inotify-tools ])}
         fix_vscode () {
             bin_dir="$1"
+            echo "Fixing ''${bin_dir} ..."
             if [[ -e $bin_dir ]]; then
               find "$bin_dir" -mindepth 2 -maxdepth 2 -name node -exec ln -sfT ${nodeBinToUse} {} \;
               find "$bin_dir" -path '*/bin/rg' -exec ln -sfT ${pkgs.ripgrep}/bin/rg {} \;
@@ -95,6 +96,7 @@ in
         while IFS=: read -r bin_dir event; do
           # A new version of the VS Code Server is being created.
           if [[ $event == 'CREATE,ISDIR' ]]; then
+            echo "Caught event ''${event} in ''${bin_dir}"
             # Create a trigger to know when their node is being created and replace it for our symlink.
             touch "$bin_dir/node"
             inotifywait -qq -e DELETE_SELF "$bin_dir/node"
