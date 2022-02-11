@@ -87,7 +87,7 @@ in
           ~/.vscode-server-insiders/bin
         )
         fix_all_vscode() {
-          for bin_dir in $dirs ; do
+          for bin_dir in ''${dirs[@]} ; do
             fix_vscode "$bin_dir"
           done
         }
