@@ -89,6 +89,7 @@ in
         fix_all_vscode() {
           for bin_dir in $dirs ; do
             fix_vscode "$bin_dir"
+          done
         }
 
         while IFS=: read -r bin_dir event; do
