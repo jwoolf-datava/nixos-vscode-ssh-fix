@@ -69,7 +69,7 @@ in
     description = "Automatically fix the VS Code server used by the remote SSH extension";
     serviceConfig = {
       Restart = "always";
-      RestartSec = 0;
+      RestartSec = 10;
       ExecStart = "${pkgs.writeShellScript "${name}.sh" ''
         set -euo pipefail
         PATH=${makeBinPath (with pkgs; [ coreutils findutils inotify-tools ])}
@@ -91,7 +91,7 @@ in
             fix_vscode "$bin_dir"
           done
         }
-
+        fix_all_vscode
         while IFS=: read -r bin_dir event; do
           # A new version of the VS Code Server is being created.
           if [[ $event == 'CREATE,ISDIR' ]]; then
@@ -105,6 +105,7 @@ in
             exit 0
           fi
         done < <(inotifywait -q -m -e CREATE,ISDIR -e DELETE_SELF --format '%w%f:%e' "''${dirs[@]}")
+        fix_all_vscode
       ''}";
     };
   };
