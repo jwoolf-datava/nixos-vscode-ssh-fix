@@ -83,8 +83,8 @@ in
             fi
         }
         dirs=(
-          "~/.vscode-server/bin"
-          "~/.vscode-server-insiders/bin"
+          ~/.vscode-server/bin
+          ~/.vscode-server-insiders/bin
         )
         fix_all_vscode() {
           for bin_dir in $dirs ; do
