@@ -25,6 +25,9 @@ let
 
       # mono
       krb5
+
+      # Because glibc differs from system
+      file
     ]);
 
     runScript = "${originalNodePackage}/bin/node";
