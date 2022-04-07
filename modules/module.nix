@@ -4,7 +4,7 @@ moduleConfig:
 with lib;
 
 let
-  originalNodePackage = pkgs.nodejs-14_x;
+  originalNodePackage = pkgs.nodejs-16_x;
 
   # Adapted from https://github.com/NixOS/nixpkgs/blob/nixos-unstable/pkgs/applications/editors/vscode/generic.nix#L181
   nodePackageFhs = pkgs.buildFHSUserEnv {
