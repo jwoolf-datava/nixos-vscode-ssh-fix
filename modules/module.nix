@@ -67,6 +67,10 @@ in
     };
   };
 
+  /**
+  fullVersion=$(strings $vscodeNodeBinary | egrep -i "nodejs.org/download/release.*tar.gz" | sed "s/.*node-v//;s/.tar.gz//" | head -n1)
+  majorNodeVersion=${version%%\.**}
+  **/
   config = moduleConfig rec {
     name = "auto-fix-vscode-server";
     description = "Automatically fix the VS Code server used by the remote SSH extension";
