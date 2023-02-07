@@ -5,7 +5,7 @@ with lib;
 
 let
   originalNodePackage = pkgs.nodejs-16_x;
-
+  vscodeSpawnHelper = "${pkgs.vscode}/lib/vscode/resources/app/node_modules.asar.unpacked/node-pty/build/Release/spawn-helper";
   # Adapted from https://github.com/NixOS/nixpkgs/blob/nixos-unstable/pkgs/applications/editors/vscode/generic.nix#L181
   nodePackageFhs = pkgs.buildFHSUserEnv {
     name = originalNodePackage.name;
@@ -86,6 +86,7 @@ in
             if [[ -e $bin_dir ]]; then
               find "$bin_dir" -mindepth 1 -maxdepth 2 -name node -exec ln -sfT ${nodeBinToUse} {} \;
               find "$bin_dir" -path '*/bin/rg' -exec ln -sfT ${pkgs.ripgrep}/bin/rg {} \;
+              find "$bin_dir" -name 'spawn-helper' -exec ln -sfT ${vscodeSpawnHelper} {} \;
             else
               mkdir -p "$bin_dir"
             fi
