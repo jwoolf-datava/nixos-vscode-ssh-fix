@@ -4,7 +4,7 @@ moduleConfig:
 with lib;
 
 let
-  originalNodePackage = pkgs.nodejs-16_x;
+  originalNodePackage = pkgs.nodejs-18_x;
   vscodeSpawnHelper = "${pkgs.vscode}/lib/vscode/resources/app/node_modules.asar.unpacked/node-pty/build/Release/spawn-helper";
   # Adapted from https://github.com/NixOS/nixpkgs/blob/nixos-unstable/pkgs/applications/editors/vscode/generic.nix#L181
   nodePackageFhs = pkgs.buildFHSUserEnv {
