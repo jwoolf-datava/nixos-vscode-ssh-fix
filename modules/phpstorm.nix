@@ -34,7 +34,7 @@ in {
     description = "Automatically fix the PHPStorm RemoteDev.";
     path = [ phpStormPatched ];
     serviceConfig = {
-      Restart = "never";
+      Restart = "no";
       ExecStart = "${pkgs.writeShellScript "${name}.sh" ''
         phpstorm-remote-dev-server registerBackendLocationForGateway
       ''}";

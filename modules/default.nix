@@ -7,7 +7,9 @@ let
     };
   };
 in
-[
-  import ./vscode.nix ({ name, description, serviceConfig }: (moduleConfig name description serviceConfig))
-  import ./phpstorm.nix ({ name, description, serviceConfig }: (moduleConfig name description serviceConfig))
-]
+{
+  imports = [
+    (import ./vscode.nix ({ name, description, serviceConfig, ... }: (moduleConfig name description serviceConfig)))
+    (import ./phpstorm.nix ({ name, description, serviceConfig, ... }: (moduleConfig name description serviceConfig)))
+  ];
+}

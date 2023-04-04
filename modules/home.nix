@@ -4,16 +4,16 @@ let
       Unit = {
         Description = description;
       };
-
       Service = serviceConfig;
-
       Install = {
         WantedBy = [ "default.target" ];
       };
     };
   };
 in
-[
-  import ./vscode.nix ({ name, description, serviceConfig }: (moduleConfig name description serviceConfig))
-  import ./phpstorm.nix ({ name, description, serviceConfig }: (moduleConfig name description serviceConfig))
-]
+{
+  imports = [
+    ./vscode.nix ({ name, description, serviceConfig, ... }: (moduleConfig name description serviceConfig))
+    ./phpstorm.nix ({ name, description, serviceConfig, ... }: (moduleConfig name description serviceConfig))
+  ];
+}
