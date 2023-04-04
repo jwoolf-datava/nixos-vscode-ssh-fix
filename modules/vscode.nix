@@ -52,7 +52,7 @@ let
     originalNodePackageBin;
 in
 {
-  options.services.vscode-server = with types;{
+  options.services.vscode-server = with types; {
     enable = mkEnableOption "auto-fix service for vscode-server in NixOS";
     nodePackage = mkOption {
       type = package;
