@@ -4,18 +4,18 @@ moduleConfig:
 with lib;
 
 let
-  phpStormPatched = final: prev: pkgs.jetbrains.phpstorm.overrideAttrs (old: {
+  phpStormPatched = with pkgs; jetbrains.phpstorm.overrideAttrs (old: {
       patches = (old.patches or []) ++ [
         ./phpstorm.patch
       ];
 
       installPhase = (old.installPhase or "") + ''
         makeWrapper "$out/$pname/bin/remote-dev-server.sh" "$out/bin/$pname-remote-dev-server" \
-          --prefix PATH : "$out/libexec/$pname:${final.lib.makeBinPath [ final.jdk final.coreutils final.gnugrep final.which final.git ]}" \
-          --prefix LD_LIBRARY_PATH : "${final.lib.makeLibraryPath ([
+          --prefix PATH : "$out/libexec/$pname:${pkgs.lib.makeBinPath [ pkgs.jdk pkgs.coreutils pkgs.gnugrep pkgs.which pkgs.git ]}" \
+          --prefix LD_LIBRARY_PATH : "${pkgs.lib.makeLibraryPath ([
             # Some internals want libstdc++.so.6
-            final.stdenv.cc.cc.lib final.libsecret final.e2fsprogs
-            final.libnotify
+            pkgs.stdenv.cc.cc.lib pkgs.libsecret pkgs.e2fsprogs
+            pkgs.libnotify
           ])}" \
           --set-default JDK_HOME "$jdk" \
           --set-default ANDROID_JAVA_HOME "$jdk" \
