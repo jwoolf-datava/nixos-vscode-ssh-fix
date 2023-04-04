@@ -36,7 +36,7 @@ in {
     serviceConfig = {
       Restart = "no";
       ExecStart = "${pkgs.writeShellScript "${name}.sh" ''
-        phpstorm-remote-dev-server registerBackendLocationForGateway
+        ${phpStormPatched}/bin/phpstorm-remote-dev-server registerBackendLocationForGateway
       ''}";
     };
   };
