@@ -1,8 +1,6 @@
-diff --git a/plugins/remote-dev-server/bin/launcher.sh b/plugins/remote-dev-server/bin/launcher.sh
-index 085c648..133990e 100755
 --- a/plugins/remote-dev-server/bin/launcher.sh
 +++ b/plugins/remote-dev-server/bin/launcher.sh
-@@ -66,10 +66,6 @@ clean_up_temp()
+@@ -64,10 +64,6 @@ clean_up_temp()
      rm -f "$TEMP_REMOTE_DEV_PROPERTIES_PATH"
    fi
  
@@ -13,29 +11,14 @@ index 085c648..133990e 100755
    if [ -n "${XVFB_PID:-}" ]; then
      kill -9 "$XVFB_PID" >/dev/null 2>&1
    fi
-@@ -257,72 +253,6 @@ echo "IDE system directory: $IJ_HOST_SYSTEM_DIR"
+@@ -250,43 +246,6 @@ echo "IDE system directory: $IJ_HOST_SYSTEM_DIR"
  mkdir -p "$IJ_HOST_CONFIG_DIR" || (echo "Failed to create $IJ_HOST_CONFIG_DIR" 1>&2; exit 1)
  mkdir -p "$IJ_HOST_SYSTEM_DIR" || (echo "Failed to create $IJ_HOST_SYSTEM_DIR" 1>&2; exit 1)
  
 -# -------------------------------------------------------------------------------------
 -# Patch JBR to make self-contained JVM (requires nothing from host system except glibc)
 -# -------------------------------------------------------------------------------------
--if [ -n "${REMOTE_DEV_SERVER_USE_SELF_CONTAINED_LIBS:-}" ]; then
--  # already set by environment
--  echo "\$REMOTE_DEV_SERVER_USE_SELF_CONTAINED_LIBS=$REMOTE_DEV_SERVER_USE_SELF_CONTAINED_LIBS"
--elif [ $IS_DARWIN -eq 1 ]; then
--  REMOTE_DEV_SERVER_USE_SELF_CONTAINED_LIBS=0
--elif /lib64/ld-linux-x86-64.so.2 2>&1 | grep -q "gcompat ELF interpreter stub"; then
--  # Not usable under Alpine and other musl-based linux distributions (x86-64)
--  REMOTE_DEV_SERVER_USE_SELF_CONTAINED_LIBS=0
--elif /lib/ld-linux-aarch64.so.1 2>&1 | grep -q "gcompat ELF interpreter stub"; then
--  # Not usable under Alpine and other musl-based linux distributions (aarch64)
--  REMOTE_DEV_SERVER_USE_SELF_CONTAINED_LIBS=0
--else
--  REMOTE_DEV_SERVER_USE_SELF_CONTAINED_LIBS=1
--fi
--
--if [ $REMOTE_DEV_SERVER_USE_SELF_CONTAINED_LIBS -eq 1 ]; then
+-if [ $IS_DARWIN -ne 1 ]; then
 -  SELFCONTAINED_LIBS="$REMOTE_DEV_SERVER_DIR/selfcontained/lib"
 -  if [ ! -d "$SELFCONTAINED_LIBS" ]; then
 -    echo "ERROR! Unable to locate libraries for self-contained idea distribution. Directory not found: '$SELFCONTAINED_LIBS'." 1>&2
@@ -55,23 +38,9 @@ index 085c648..133990e 100755
 -      extra_arg="\"-Djava.home=$TEMP_JBR\""
 -    fi
 -    mv "$file" "$file.bin"
--
--    case $(uname -m) in
--      x86_64)
--        LD_LINUX=/lib64/ld-linux-x86-64.so.2
--        ;;
--      aarch64)
--        LD_LINUX=/lib/ld-linux-aarch64.so.1
--        ;;
--      *)
--        echo "Unsupported architecture $(uname -m)" 1>&2
--        exit 1
--        ;;
--    esac
--
 -    cat >"$file" <<EOT
 -#!/bin/sh
--exec $LD_LINUX --library-path "$SELFCONTAINED_LIBS" "${file}.bin" $extra_arg "\$@"
+-exec /lib64/ld-linux-x86-64.so.2 --library-path "$SELFCONTAINED_LIBS" "${file}.bin" $extra_arg "\$@"
 -EOT
 -    chmod 755 "$file"
 -  }
@@ -86,19 +55,16 @@ index 085c648..133990e 100755
  # -----------------------------
  # Display project trust warning
  # -----------------------------
-@@ -402,12 +332,6 @@ fi
+@@ -366,12 +325,6 @@ fi
  # Replace only default Xmx since users may modify vmoptions file to e.g. make -Xmx even bigger
  sed "s/$IDE_DEFAULT_XMX/-Xmx2048m/g" "$TEMP_VM_OPTIONS" > "${TEMP_VM_OPTIONS}.tmp" && mv "${TEMP_VM_OPTIONS}.tmp" "${TEMP_VM_OPTIONS}"
  
--if [ $REMOTE_DEV_SERVER_USE_SELF_CONTAINED_LIBS -eq 1 ]; then
+-if [ $IS_DARWIN -ne 1 ]; then
 -  # Since TEMP_JBR is built on symlinks, java tries to resolve it and calculates java.home incorrectly
 -  # Make sure java.home points to our patched JBR
 -  echo "-Djava.home=$TEMP_JBR" >>"$TEMP_VM_OPTIONS"
 -fi
 -
- if [ $IS_WSL2 -eq 1 ]; then
-   echo "-Djava.net.preferIPv4Stack=true" >>"$TEMP_VM_OPTIONS"
- fi
--- 
-2.39.2
-
+ export "${IDE_PRODUCT_UC}_VM_OPTIONS=${TEMP_VM_OPTIONS}"
+ 
+ if [ "${REMOTE_DEV_SERVER_JCEF_ENABLED:-}" = "1" ] || [ "${REMOTE_DEV_SERVER_JCEF_ENABLED:-}" = "true" ]; then
