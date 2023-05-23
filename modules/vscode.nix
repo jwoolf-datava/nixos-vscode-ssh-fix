@@ -5,7 +5,7 @@ with lib;
 
 let
   originalNodePackage = pkgs.nodejs-16_x;
-  vscodeSpawnHelper = "${pkgs.vscode}/lib/vscode/resources/app/node_modules.asar.unpacked/node-pty/build/Release/spawn-helper";
+  vscodeCodeBinary = "${pkgs.vscode}/lib/vscode/code";
   libstdc = "${pkgs.gcc-unwrapped.lib}/lib/libstdc++.so.6";
   # Adapted from https://github.com/NixOS/nixpkgs/blob/nixos-unstable/pkgs/applications/editors/vscode/generic.nix#L181
   nodePackageFhs = pkgs.buildFHSUserEnv {
@@ -81,7 +81,7 @@ in
       ExecStart = "${pkgs.writeShellScript "${name}.sh" ''
         set -euo pipefail
         PATH=${makeBinPath (with pkgs; [ coreutils findutils inotify-tools patchelf ])}
-        INTERPRETOR="$(patchelf --print-interpreter ${vscodeSpawnHelper})"
+        INTERPRETOR="$(patchelf --print-interpreter ${vscodeCodeBinary})"
         fix_vscode () {
             bin_dir="$1"
             echo "Fixing ''${bin_dir} ..."
@@ -90,6 +90,8 @@ in
               find "$bin_dir" -path '*/bin/rg' -exec ln -sfT ${pkgs.ripgrep}/bin/rg {} \;
               find "$bin_dir" -name 'spawn-helper' -exec patchelf --set-interpreter "$INTERPRETOR" {} \;
               find "$bin_dir" -name 'spawn-helper' -exec patchelf --replace-needed "libstdc++.so.6" "${libstdc}" {} \;
+              find "$bin_dir" -name 'node' -type f -exec patchelf --set-interpreter "$INTERPRETOR2" {} \;
+              find "$bin_dir" -name 'node' -type f -exec patchelf --replace-needed "libstdc++.so.6" "${libstdc}" {} \;
             else
               mkdir -p "$bin_dir"
             fi
