@@ -90,7 +90,7 @@ in
               find "$bin_dir" -path '*/bin/rg' -exec ln -sfT ${pkgs.ripgrep}/bin/rg {} \;
               find "$bin_dir" -name 'spawn-helper' -exec patchelf --set-interpreter "$INTERPRETOR" {} \;
               find "$bin_dir" -name 'spawn-helper' -exec patchelf --replace-needed "libstdc++.so.6" "${libstdc}" {} \;
-              find "$bin_dir" -name 'node' -type f -exec patchelf --set-interpreter "$INTERPRETOR2" {} \;
+              find "$bin_dir" -name 'node' -type f -exec patchelf --set-interpreter "$INTERPRETOR" {} \;
               find "$bin_dir" -name 'node' -type f -exec patchelf --replace-needed "libstdc++.so.6" "${libstdc}" {} \;
             else
               mkdir -p "$bin_dir"
