@@ -98,6 +98,7 @@ in
         }
         dirs=(
           ~/.vscode-server/bin
+          ~/.vscode-server/cli
           ~/.vscode-server-insiders/bin
         )
         fix_all_vscode() {
